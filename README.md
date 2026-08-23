@@ -75,8 +75,6 @@ Runtime data lives at:
 ```
 
 ## Optional setup
-
-- [Microsoft sign-in notes](docs/MicrosoftSignInSetup.md)
 - [Discord Rich Presence](docs/DiscordRichPresenceSetup.md) — set `DANCLIENT_DISCORD_APP_ID` if you want presence
 
 ```powershell
