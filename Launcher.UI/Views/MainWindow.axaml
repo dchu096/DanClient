@@ -1,0 +1,458 @@
+<Window
+    x:Class="Launcher.UI.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:Launcher.Core.Models;assembly=Launcher.Core"
+    xmlns:vm="clr-namespace:Launcher.UI.ViewModels"
+    mc:Ignorable="d"
+    Classes="launcher"
+    Width="1100"
+    Height="680"
+    MinWidth="920"
+    MinHeight="600"
+    ExtendClientAreaToDecorationsHint="True"
+    WindowDecorations="None"
+    Icon="avares://Launcher.UI/Assets/danclient.ico"
+    Title="DanClient">
+
+  <Grid RowDefinitions="36,*">
+    <!-- Title bar -->
+    <Border Grid.Row="0" Classes="titleBar" PointerPressed="TitleBar_OnPointerPressed">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="16,0">
+          <Image Width="16" Height="16" Source="avares://Launcher.UI/Assets/danclient-logo.png" Stretch="Uniform" />
+          <TextBlock Text="DanClient" FontSize="12" FontWeight="SemiBold" Foreground="#888888" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal">
+          <Button x:Name="MinimizeButton" Classes="chrome" Click="MinimizeButton_OnClick">
+            <Border Width="10" Height="1.5" Background="#888888" />
+          </Button>
+          <Button x:Name="MaximizeButton" Classes="chrome" Click="MaximizeButton_OnClick">
+            <Border Width="10" Height="10" BorderBrush="#888888" BorderThickness="1.2" />
+          </Button>
+          <Button x:Name="CloseButton" Classes="chrome chromeClose" Click="CloseButton_OnClick">
+            <Grid Width="11" Height="11">
+              <Border Width="13" Height="1.5" Background="#888888" RenderTransformOrigin="50%,50%">
+                <Border.RenderTransform><RotateTransform Angle="45" /></Border.RenderTransform>
+              </Border>
+              <Border Width="13" Height="1.5" Background="#888888" RenderTransformOrigin="50%,50%">
+                <Border.RenderTransform><RotateTransform Angle="-45" /></Border.RenderTransform>
+              </Border>
+            </Grid>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Body -->
+    <Grid Grid.Row="1" ColumnDefinitions="220,*">
+      <!-- Sidebar -->
+      <Border Classes="sidebar">
+        <Grid RowDefinitions="Auto,*,Auto">
+          <StackPanel Margin="20,20,20,16" Spacing="10">
+            <Border Width="44" Height="44" CornerRadius="8" Background="#1A2414" BorderBrush="#2A3A1A" BorderThickness="1" ClipToBounds="True">
+              <Image Source="avares://Launcher.UI/Assets/danclient-logo.png" Stretch="Uniform" MaxWidth="44" MaxHeight="44" />
+            </Border>
+            <StackPanel Spacing="2">
+              <TextBlock Text="DanClient" FontSize="15" FontWeight="Bold" Foreground="#FFFFFF" />
+              <TextBlock Text="Minecraft Launcher" FontSize="11" Foreground="#555555" />
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel Grid.Row="1" Margin="10,0" Spacing="2" VerticalAlignment="Top">
+            <Button Classes="navItem" Classes.active="{Binding IsPlayTabActive}" Command="{Binding SelectDashboardCommand}" Content="Play" />
+            <Button Classes="navItem" Classes.active="{Binding IsModsTabActive}" Command="{Binding SelectModsCommand}" Content="Mods" />
+            <Button Classes="navItem" Classes.active="{Binding IsSettingsTabActive}" Command="{Binding SelectSettingsCommand}" Content="Settings" />
+          </StackPanel>
+
+          <Border Grid.Row="2" Margin="16,0,16,16" Padding="0,12,0,0" BorderBrush="#222222" BorderThickness="0,1,0,0">
+            <StackPanel Spacing="10">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <Border Width="34" Height="34" CornerRadius="17" Background="#1E2A18" BorderBrush="#2A3A1A" BorderThickness="1">
+                  <TextBlock Text="{Binding AccountInitial}" FontSize="13" FontWeight="Bold" Foreground="#82C35D"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel VerticalAlignment="Center" Spacing="1">
+                  <TextBlock Text="{Binding AccountName}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="140" />
+                  <TextBlock Text="Microsoft account" FontSize="10" Foreground="#555555" IsVisible="{Binding IsSignedIn}" />
+                  <TextBlock Text="Not signed in" FontSize="10" Foreground="#555555" IsVisible="{Binding IsSignInVisible}" />
+                </StackPanel>
+              </Grid>
+              <Button IsVisible="{Binding IsSignInVisible}" Classes="linkButton" Command="{Binding SignInCommand}" Content="Sign in with Microsoft" HorizontalAlignment="Left" />
+              <Button IsVisible="{Binding IsSignedIn}" Classes="linkButton" Command="{Binding SignOutCommand}" Content="Sign out" HorizontalAlignment="Left" />
+              <Border IsVisible="{Binding HasSignInCode}" Classes="codeBox" Padding="12">
+                <StackPanel Spacing="4" HorizontalAlignment="Center">
+                  <TextBlock Text="Enter this code on the Microsoft page" FontSize="10" Foreground="#666666" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="160" />
+                  <TextBlock Text="{Binding SignInCode}" FontSize="20" FontWeight="Bold" LetterSpacing="3" Foreground="#82C35D" HorizontalAlignment="Center" />
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </Border>
+        </Grid>
+      </Border>
+
+      <!-- Main content -->
+      <Grid Grid.Column="1" RowDefinitions="*,Auto,28">
+        <Panel Grid.Row="0">
+          <!-- PLAY TAB -->
+          <Grid IsVisible="{Binding IsDashboardVisible}">
+            <Panel IsHitTestVisible="False">
+              <!-- Ready: green fade -->
+              <Panel IsVisible="{Binding IsPlayStateReady}">
+                <Border>
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                      <GradientStop Color="#162210" Offset="0" />
+                      <GradientStop Color="#0C0C0C" Offset="0.5" />
+                      <GradientStop Color="#0A100A" Offset="1" />
+                    </LinearGradientBrush>
+                  </Border.Background>
+                </Border>
+                <Border Opacity="0.06">
+                  <Border.Background>
+                    <RadialGradientBrush Center="0.25,0.25" RadiusX="0.7" RadiusY="0.5">
+                      <GradientStop Color="#82C35D" Offset="0" />
+                      <GradientStop Color="Transparent" Offset="1" />
+                    </RadialGradientBrush>
+                  </Border.Background>
+                </Border>
+              </Panel>
+
+              <!-- Installing: yellow fade -->
+              <Panel IsVisible="{Binding IsPlayStateInstalling}">
+                <Border>
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                      <GradientStop Color="#2A2410" Offset="0" />
+                      <GradientStop Color="#0C0C0C" Offset="0.5" />
+                      <GradientStop Color="#1A160A" Offset="1" />
+                    </LinearGradientBrush>
+                  </Border.Background>
+                </Border>
+                <Border Opacity="0.07">
+                  <Border.Background>
+                    <RadialGradientBrush Center="0.25,0.25" RadiusX="0.7" RadiusY="0.5">
+                      <GradientStop Color="#D4A017" Offset="0" />
+                      <GradientStop Color="Transparent" Offset="1" />
+                    </RadialGradientBrush>
+                  </Border.Background>
+                </Border>
+              </Panel>
+
+              <!-- Running: grey fade -->
+              <Panel IsVisible="{Binding IsPlayStateRunning}">
+                <Border>
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                      <GradientStop Color="#1A1A1A" Offset="0" />
+                      <GradientStop Color="#0C0C0C" Offset="0.5" />
+                      <GradientStop Color="#141414" Offset="1" />
+                    </LinearGradientBrush>
+                  </Border.Background>
+                </Border>
+                <Border Opacity="0.05">
+                  <Border.Background>
+                    <RadialGradientBrush Center="0.25,0.25" RadiusX="0.7" RadiusY="0.5">
+                      <GradientStop Color="#888888" Offset="0" />
+                      <GradientStop Color="Transparent" Offset="1" />
+                    </RadialGradientBrush>
+                  </Border.Background>
+                </Border>
+              </Panel>
+
+              <!-- Crashed: red fade -->
+              <Panel IsVisible="{Binding IsPlayStateCrashed}">
+                <Border>
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                      <GradientStop Color="#2A1010" Offset="0" />
+                      <GradientStop Color="#0C0C0C" Offset="0.5" />
+                      <GradientStop Color="#1A0A0A" Offset="1" />
+                    </LinearGradientBrush>
+                  </Border.Background>
+                </Border>
+                <Border Opacity="0.08">
+                  <Border.Background>
+                    <RadialGradientBrush Center="0.25,0.25" RadiusX="0.7" RadiusY="0.5">
+                      <GradientStop Color="#E05252" Offset="0" />
+                      <GradientStop Color="Transparent" Offset="1" />
+                    </RadialGradientBrush>
+                  </Border.Background>
+                </Border>
+              </Panel>
+            </Panel>
+
+            <Grid Margin="40,40" RowDefinitions="Auto,*">
+              <StackPanel Grid.Row="0" Spacing="6" VerticalAlignment="Top">
+                <TextBlock Text="{Binding SelectedProfileName}" Foreground="#82C35D" FontSize="13" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding PlayHeadline}" FontSize="38" FontWeight="Bold" Foreground="#FFFFFF" />
+                <TextBlock Text="{Binding PlaySubtitle}" FontSize="13" Foreground="#888888" Margin="0,4,0,0" TextWrapping="Wrap" MaxWidth="560" />
+
+                <Border Margin="0,24,0,0" Background="#1A1A1A" BorderBrush="#333333" BorderThickness="1" CornerRadius="6" Padding="14,10" MaxWidth="500" IsVisible="{Binding IsSignInVisible}">
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="i" FontSize="14" FontWeight="Bold" Foreground="#82C35D" VerticalAlignment="Center" />
+                    <TextBlock Text="Sign in with Microsoft to launch the game after installing." FontSize="12" Foreground="#999999" VerticalAlignment="Center" TextWrapping="Wrap" />
+                  </StackPanel>
+                </Border>
+
+                <Border Margin="0,24,0,0" Background="#1A1A1A" BorderBrush="#333333" BorderThickness="1" CornerRadius="6" Padding="14" IsVisible="{Binding IsCreateProfileVisible}" MaxWidth="500" HorizontalAlignment="Left">
+                  <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                    <TextBox Text="{Binding NewProfileName}" PlaceholderText="New profile name" />
+                    <Button Grid.Column="1" Command="{Binding ConfirmCreateProfileCommand}" Content="Create" />
+                    <Button Grid.Column="2" Classes="compact" Command="{Binding CancelCreateProfileCommand}" Content="Cancel" />
+                  </Grid>
+                </Border>
+              </StackPanel>
+
+              <Border Grid.Row="1" Margin="0,20,0,0" Background="#140A0A" BorderBrush="#4A2020" BorderThickness="1" CornerRadius="8" Padding="16"
+                      IsVisible="{Binding IsPlayStateCrashed}" VerticalAlignment="Stretch" MaxHeight="420">
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="12">
+                  <TextBlock Text="Crash details" FontSize="12" FontWeight="SemiBold" Foreground="#E05252" />
+                  <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <TextBlock Text="{Binding CrashDetails}" FontFamily="Consolas, Courier New, monospace" FontSize="11" Foreground="#DDDDDD" TextWrapping="Wrap" />
+                  </ScrollViewer>
+                  <Button Grid.Row="2" Classes="compact" Command="{Binding DismissCrashCommand}" Content="Dismiss" HorizontalAlignment="Left" />
+                </Grid>
+              </Border>
+            </Grid>
+
+            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" VerticalAlignment="Top" />
+          </Grid>
+
+          <!-- MODS TAB -->
+          <Grid IsVisible="{Binding IsModsVisible}" Margin="0" RowDefinitions="Auto,*">
+            <!-- Header bar -->
+            <Border Grid.Row="0" Background="#0E0E0E" BorderBrush="#222222" BorderThickness="0,0,0,1" Padding="24,14">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Mods" FontSize="22" FontWeight="Bold" Foreground="#FFFFFF" />
+                  <TextBlock Text="{Binding ModsDirectory}" FontSize="11" Foreground="#555555" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <Button Grid.Column="1" Classes="compact" Command="{Binding OpenModsFolderCommand}" Content="Open folder" VerticalAlignment="Center" />
+              </Grid>
+            </Border>
+
+              <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+              <!-- Installed mods (left) -->
+              <Border Background="#0C0C0C" BorderBrush="#222222" BorderThickness="{Binding InstalledModsPanelBorderThickness}" Padding="20,16">
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="12">
+                  <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding InstalledModsTitle}" FontSize="14" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                      <TextBlock Text="Toggle mods on or off for your profile." FontSize="11" Foreground="#666666" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Classes="compact" Command="{Binding RefreshModsCommand}" Content="Refresh" VerticalAlignment="Center" />
+                    <Button Grid.Column="2" Classes="compact" Command="{Binding ToggleModrinthBrowseCommand}" Content="{Binding ModrinthBrowseToggleText}" VerticalAlignment="Center" />
+                  </Grid>
+
+                  <ScrollViewer Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Mods}">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <StackPanel Spacing="8" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ModCardViewModel">
+                          <Border Background="#161616" BorderBrush="#282828" BorderThickness="1" CornerRadius="8" Padding="12">
+                            <Grid ColumnDefinitions="40,*" RowDefinitions="Auto,Auto,Auto">
+                              <Border Grid.RowSpan="3" Width="40" Height="40" CornerRadius="6" Background="#1E1E1E" ClipToBounds="True" VerticalAlignment="Top">
+                                <Image Source="{Binding Icon}" Stretch="UniformToFill" />
+                              </Border>
+                              <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis" Margin="10,0,0,0" />
+                              <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6" Margin="10,4,0,0">
+                                <Border Background="#1A2A14" BorderBrush="#2A3A1A" BorderThickness="1" CornerRadius="3" Padding="5,2">
+                                  <TextBlock Text="{Binding Version}" FontSize="10" Foreground="#82C35D" />
+                                </Border>
+                                <Border Background="#1A1A1A" BorderBrush="#2A2A2A" BorderThickness="1" CornerRadius="3" Padding="5,2">
+                                  <TextBlock Text="{Binding Source}" FontSize="10" Foreground="#666666" />
+                                </Border>
+                              </StackPanel>
+                              <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Margin="10,8,0,0">
+                                <TextBlock Text="{Binding FileName}" FontSize="10" Foreground="#555555" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                <Button Grid.Column="1" Classes="compact" Command="{Binding UninstallCommand}" Content="Remove" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="2" IsChecked="{Binding IsEnabled}" Command="{Binding ToggleCommand}" OnContent="" OffContent="" VerticalAlignment="Center" />
+                              </Grid>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </ScrollViewer>
+
+                  <Button Grid.Row="2" Classes="compact" Command="{Binding InstallFabricPerformanceCommand}" Content="Install recommended Fabric stack (Sodium + Fabric API)" HorizontalAlignment="Stretch" />
+                </Grid>
+              </Border>
+
+              <!-- Modrinth browser (right) -->
+              <Border Grid.Column="1" Width="{Binding ModrinthBrowsePanelWidth}" Background="#101010" Padding="16,16,20,16" IsVisible="{Binding IsModrinthBrowseVisible}">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="10">
+                  <StackPanel Spacing="2">
+                    <TextBlock Text="{Binding ModrinthBrowseHeader}" FontSize="15" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                    <TextBlock Text="{Binding ModrinthBrowseSummary}" FontSize="11" Foreground="#666666" TextWrapping="Wrap" />
+                  </StackPanel>
+
+                  <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                    <TextBox Text="{Binding ModrinthQuery}" PlaceholderText="Search Modrinth..." />
+                    <ComboBox Grid.Column="1" Classes="compact" ItemsSource="{Binding ModrinthSortOptions}" SelectedItem="{Binding SelectedModrinthSort}" MinWidth="130" />
+                    <Button Grid.Column="2" Command="{Binding SearchModrinthCommand}" Content="Search" />
+                  </Grid>
+
+                  <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="16">
+                    <CheckBox IsChecked="{Binding HideModBetaVersions}" Content="Hide beta versions" />
+                    <CheckBox IsChecked="{Binding HideModAlphaVersions}" Content="Hide alpha versions" />
+                  </StackPanel>
+
+                  <ProgressBar Grid.Row="3" IsIndeterminate="True" IsVisible="{Binding IsBrowsingModrinth}" />
+
+                  <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding ModrinthResults}">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <StackPanel Spacing="8" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ModrinthProjectViewModel">
+                          <Border Background="#161616" BorderBrush="#282828" BorderThickness="1" CornerRadius="8" Padding="12">
+                            <Grid ColumnDefinitions="44,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10">
+                              <Border Grid.RowSpan="4" Width="44" Height="44" CornerRadius="8" Background="#1E1E1E" ClipToBounds="True" VerticalAlignment="Top">
+                                <Image Source="{Binding Icon}" Stretch="UniformToFill" />
+                              </Border>
+                              <TextBlock Grid.Column="1" Text="{Binding Title}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis" />
+                              <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Description}" FontSize="11" Foreground="#777777" TextWrapping="Wrap" MaxHeight="40" TextTrimming="CharacterEllipsis" />
+                              <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                                <TextBlock Text="{Binding AuthorText}" FontSize="10" Foreground="#555555" />
+                                <TextBlock Text="{Binding DownloadsText}" FontSize="10" Foreground="#555555" />
+                              </StackPanel>
+                              <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,8,0,0">
+                                <ComboBox Classes="compact" ItemsSource="{Binding Versions}" SelectedItem="{Binding SelectedVersion}"
+                                          MinWidth="0" HorizontalAlignment="Stretch" IsEnabled="{Binding IsVersionSelectorEnabled}">
+                                  <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:ModrinthProjectVersion">
+                                      <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                    </DataTemplate>
+                                  </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <Button Grid.Column="1" Classes="compact" Command="{Binding InstallCommand}" Content="{Binding InstallButtonText}" MinWidth="72" />
+                              </Grid>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </ScrollViewer>
+
+                  <Button Grid.Row="5" Classes="compact" Command="{Binding LoadMoreModrinthCommand}" Content="Load more mods"
+                          HorizontalAlignment="Stretch" IsVisible="{Binding CanLoadMoreModrinth}" />
+                </Grid>
+              </Border>
+            </Grid>
+          </Grid>
+
+          <!-- SETTINGS TAB -->
+          <Grid IsVisible="{Binding IsSettingsVisible}" Margin="32,28" ColumnDefinitions="*,*" ColumnSpacing="20">
+            <Border Classes="card">
+              <StackPanel Spacing="14">
+                <TextBlock Text="Launch options" FontSize="16" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                <StackPanel Spacing="4">
+                  <TextBlock Text="Profile name" Classes="label" />
+                  <TextBox Text="{Binding ProfileName}" />
+                </StackPanel>
+                <StackPanel Spacing="4">
+                  <TextBlock Text="Memory (MB)" Classes="label" />
+                  <NumericUpDown Value="{Binding MaxMemoryMegabytes}" Minimum="1024" Maximum="32768" Increment="512" />
+                </StackPanel>
+                <StackPanel Spacing="4">
+                  <TextBlock Text="Java runtime" Classes="label" />
+                  <TextBlock Text="{Binding RequiredJavaText}" FontSize="12" Foreground="#BBBBBB" TextWrapping="Wrap" />
+                  <TextBlock Text="{Binding InstalledJavaText}" FontSize="11" Foreground="#666666" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Spacing="4">
+                  <TextBlock Text="Custom Java path (optional)" Classes="label" />
+                  <TextBox Text="{Binding JavaExecutable}" PlaceholderText="Leave blank to use bundled Java" />
+                </StackPanel>
+                <StackPanel Spacing="4">
+                  <TextBlock Text="JVM arguments" Classes="label" />
+                  <TextBox Text="{Binding ExtraJvmArgsText}" PlaceholderText="-XX:+UseG1GC" />
+                </StackPanel>
+                <CheckBox IsChecked="{Binding IncludeSnapshots}" Content="Show snapshot versions" />
+                <CheckBox IsChecked="{Binding InstallPerformanceMods}" Content="Install Fabric loader before launch" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Button Command="{Binding SaveProfileCommand}" Content="Save" />
+                  <Button Classes="compact" Command="{Binding InstallJavaCommand}" Content="Install Java runtimes" />
+                  <Button Classes="compact" Command="{Binding RefreshVersionsCommand}" Content="Refresh versions" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Classes="card">
+              <StackPanel Spacing="14">
+                <TextBlock Text="Integrations" FontSize="16" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                <CheckBox IsChecked="{Binding DiscordPresenceEnabled}" Content="Discord Rich Presence" />
+                <TextBlock Text="{Binding DiscordStatusText}" FontSize="11" Foreground="#666666" TextWrapping="Wrap" />
+                <StackPanel Spacing="4">
+                  <TextBlock Text="Account" Classes="label" />
+                  <TextBlock Text="{Binding AccountName}" FontWeight="SemiBold" />
+                </StackPanel>
+                <Button Classes="compact" Command="{Binding RefreshModsCommand}" Content="Rescan mods" HorizontalAlignment="Left" />
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Panel>
+
+        <!-- Play dock -->
+        <Border Grid.Row="1" Classes="playDock" IsVisible="{Binding IsDashboardVisible}">
+          <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" ColumnSpacing="12">
+            <StackPanel Spacing="4" VerticalAlignment="Center">
+              <TextBlock Text="Version" Classes="label" />
+              <ComboBox Classes="compact" ItemsSource="{Binding Versions}" SelectedItem="{Binding SelectedVersion}" MinWidth="150">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="models:MinecraftVersion">
+                    <TextBlock Text="{Binding DisplayName}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+              <TextBlock Text="Profile" Classes="label" />
+              <ComboBox Classes="compact" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" MinWidth="150">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="models:LauncherProfile">
+                    <TextBlock Text="{Binding Name}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Spacing="4" VerticalAlignment="Center">
+              <TextBlock Text="Java" Classes="label" />
+              <Border Classes="fieldDisplay" Padding="12,7" VerticalAlignment="Bottom" MinWidth="88">
+                <TextBlock Text="{Binding SelectedJavaText}" FontSize="13" Foreground="#F0F0F0" VerticalAlignment="Center" />
+              </Border>
+            </StackPanel>
+
+            <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Bottom">
+              <Button Classes="compact" Command="{Binding CreateProfileCommand}" Content="New" />
+              <Button Classes="compact" IsVisible="{Binding CanDeleteProfile}" Command="{Binding DeleteProfileCommand}" Content="Delete" />
+            </StackPanel>
+
+            <Button Grid.Column="5" Classes="playButton" Command="{Binding PrimaryActionCommand}" Content="{Binding PrimaryActionText}" VerticalAlignment="Center" />
+          </Grid>
+        </Border>
+
+        <!-- Status -->
+        <Border Grid.Row="2" Classes="statusStrip">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding StatusText}" Classes="statusText" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            <ProgressBar Grid.Column="1" Width="80" IsIndeterminate="True" IsVisible="{Binding IsBusy}" VerticalAlignment="Center" />
+          </Grid>
+        </Border>
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>

@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PublishDir Condition="'$(PublishDir)' == ''">$(MSBuildThisFileDirectory)..\Launcher.UI\bin\Release\net10.0\win-x64\publish\</PublishDir>
+    <InstallerVersion Condition="'$(InstallerVersion)' == ''">0.1.5</InstallerVersion>
+    <InnoSetupScript>$(MSBuildThisFileDirectory)DanClient.iss</InnoSetupScript>
+    <InstallerOutputDir>$(MSBuildThisFileDirectory)bin\$(Configuration)\</InstallerOutputDir>
+    <InstallerAssetsDir>$(MSBuildThisFileDirectory)Assets</InstallerAssetsDir>
+    <LogoPath>$(MSBuildThisFileDirectory)..\Launcher.UI\Assets\danclient-logo.png</LogoPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="InnoSetup" Version="5.6.1" />
+  </ItemGroup>
+
+  <Target Name="PublishLauncher" BeforeTargets="Build">
+    <MSBuild
+      Projects="..\Launcher.UI\Launcher.UI.csproj"
+      Targets="Publish"
+      Properties="Configuration=Release;RuntimeIdentifier=win-x64;SelfContained=true;PublishSingleFile=true;IncludeNativeLibrariesForSelfExtract=true" />
+  </Target>
+
+  <Target Name="GenerateWizardImages" AfterTargets="PublishLauncher" Condition="'$(OS)' == 'Windows_NT'">
+    <MakeDir Directories="$(InstallerAssetsDir)" />
+    <Exec
+      Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)generate-wizard-images.ps1&quot; -LogoPath &quot;$(LogoPath)&quot; -OutputDir &quot;$(InstallerAssetsDir)&quot;"
+      WorkingDirectory="$(MSBuildThisFileDirectory)" />
+  </Target>
+
+  <Target Name="BuildInstaller" AfterTargets="GenerateWizardImages" Condition="'$(OS)' == 'Windows_NT'">
+    <PropertyGroup>
+      <InnoSetupCompiler>$(NuGetPackageRoot)innosetup\5.6.1\tools\ISCC.exe</InnoSetupCompiler>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(InstallerOutputDir)" />
+
+    <Delete Files="$(InstallerOutputDir)DanClientSetup.exe" ContinueOnError="true" />
+
+    <Exec
+      Command="&quot;$(InnoSetupCompiler)&quot; &quot;$(InnoSetupScript)&quot; /O&quot;$(InstallerOutputDir)&quot; /DPublishDir=&quot;$(PublishDir)&quot; /DMyAppVersion=&quot;$(InstallerVersion)&quot;"
+      WorkingDirectory="$(MSBuildThisFileDirectory)" />
+  </Target>
+</Project>

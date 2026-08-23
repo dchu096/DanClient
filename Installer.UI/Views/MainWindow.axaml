@@ -1,0 +1,111 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Installer.UI.Views.MainWindow"
+        Width="720" Height="480"
+        MinWidth="720" MinHeight="480"
+        MaxWidth="720" MaxHeight="480"
+        CanResize="False"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowDecorations="None"
+        Background="#0C0C0C"
+        Icon="avares://DanClientSetup/Assets/danclient.ico"
+        Title="DanClient Setup">
+
+  <Grid RowDefinitions="32,*">
+    <Border Grid.Row="0" Background="#0A0A0A" BorderBrush="#222222" BorderThickness="0,0,0,1"
+            PointerPressed="TitleBar_OnPointerPressed">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Text="DanClient Setup" FontSize="12" Foreground="#555555"
+                   VerticalAlignment="Center" Margin="16,0" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal">
+          <Button Classes="chrome" Click="Minimize_Click">
+            <Border Width="10" Height="1.5" Background="#888888" />
+          </Button>
+          <Button Classes="chrome chromeClose" Click="Close_Click">
+            <Grid Width="11" Height="11">
+              <Border Width="13" Height="1.5" Background="#888888" RenderTransformOrigin="50%,50%">
+                <Border.RenderTransform><RotateTransform Angle="45" /></Border.RenderTransform>
+              </Border>
+              <Border Width="13" Height="1.5" Background="#888888" RenderTransformOrigin="50%,50%">
+                <Border.RenderTransform><RotateTransform Angle="-45" /></Border.RenderTransform>
+              </Border>
+            </Grid>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="1">
+      <Panel IsHitTestVisible="False">
+        <Border>
+          <Border.Background>
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+              <GradientStop Color="#162210" Offset="0" />
+              <GradientStop Color="#0C0C0C" Offset="0.5" />
+              <GradientStop Color="#0A100A" Offset="1" />
+            </LinearGradientBrush>
+          </Border.Background>
+        </Border>
+        <Border Opacity="0.05">
+          <Border.Background>
+            <RadialGradientBrush Center="0.3,0.3" RadiusX="0.6" RadiusY="0.4">
+              <GradientStop Color="#82C35D" Offset="0" />
+              <GradientStop Color="Transparent" Offset="1" />
+            </RadialGradientBrush>
+          </Border.Background>
+        </Border>
+      </Panel>
+
+      <Grid x:Name="OptionsPanel" RowDefinitions="Auto,Auto,*,Auto" Margin="48,32">
+        <StackPanel Grid.Row="0" Spacing="8" Orientation="Horizontal">
+          <Image Width="56" Height="56" Source="avares://DanClientSetup/Assets/danclient-logo.png" Stretch="Uniform" />
+          <StackPanel VerticalAlignment="Center" Spacing="4">
+            <TextBlock Text="DanClient" FontSize="28" FontWeight="Bold" Foreground="#FFFFFF" />
+            <TextBlock Text="Minecraft Launcher" FontSize="13" Foreground="#82C35D" />
+          </StackPanel>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1"
+                   Text="This will install or update DanClient on your computer. Existing files will be replaced automatically."
+                   FontSize="13" Foreground="#888888" Margin="0,20,0,0" TextWrapping="Wrap" MaxWidth="560" />
+
+        <StackPanel Grid.Row="2" VerticalAlignment="Center" Spacing="8">
+          <TextBlock Text="Install location" FontSize="11" FontWeight="SemiBold" Foreground="#666666" />
+          <TextBlock Text="C:\Program Files\DanClient" FontSize="14" Foreground="#CCCCCC" />
+        </StackPanel>
+
+        <Button x:Name="InstallButton" Grid.Row="3" Classes="primary" Content="INSTALL"
+                HorizontalAlignment="Stretch" Click="Install_Click" />
+      </Grid>
+
+      <StackPanel x:Name="ProgressPanel" IsVisible="False" VerticalAlignment="Center"
+                  HorizontalAlignment="Center" Spacing="20" Margin="48">
+        <Image Width="64" Height="64" Source="avares://DanClientSetup/Assets/danclient-logo.png" Stretch="Uniform" HorizontalAlignment="Center" />
+        <TextBlock Text="Installing DanClient..." FontSize="20" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+        <ProgressBar IsIndeterminate="True" Width="400" HorizontalAlignment="Center" />
+        <TextBlock x:Name="StatusText" Text="Preparing..." FontSize="13" Foreground="#888888" HorizontalAlignment="Center" />
+      </StackPanel>
+
+      <StackPanel x:Name="FinishPanel" IsVisible="False" VerticalAlignment="Center"
+                  HorizontalAlignment="Center" Spacing="20" Margin="48">
+        <Border Width="64" Height="64" CornerRadius="32" Background="#1A2A14" BorderBrush="#62A035" BorderThickness="2">
+          <TextBlock Text="OK" FontSize="24" FontWeight="Bold" Foreground="#82C35D"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <TextBlock Text="Installation Complete" FontSize="24" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+        <TextBlock Text="DanClient has been installed to C:\Program Files\DanClient." FontSize="13" Foreground="#888888" HorizontalAlignment="Center" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12" Margin="0,8,0,0">
+          <Button Classes="primary" Content="Launch DanClient" Click="LaunchAndClose_Click" />
+          <Button Classes="secondary" Content="Finish" Click="Finish_Click" />
+        </StackPanel>
+      </StackPanel>
+
+      <StackPanel x:Name="ErrorPanel" IsVisible="False" VerticalAlignment="Center"
+                  HorizontalAlignment="Center" Spacing="16" Margin="48">
+        <TextBlock Text="Installation Failed" FontSize="20" FontWeight="Bold" Foreground="#FF6B6B" HorizontalAlignment="Center" />
+        <TextBlock x:Name="ErrorText" FontSize="13" Foreground="#999999" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="500" />
+        <Button Classes="secondary" Content="Close" Click="Close_Click" HorizontalAlignment="Center" />
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Window>

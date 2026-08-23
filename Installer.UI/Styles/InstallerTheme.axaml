@@ -1,0 +1,65 @@
+<Styles xmlns="https://github.com/avaloniaui">
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="Inter, Segoe UI, Arial" />
+    <Setter Property="Background" Value="#0C0C0C" />
+    <Setter Property="Foreground" Value="#F0F0F0" />
+  </Style>
+  <Style Selector="Button">
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="#62A035" />
+    <Setter Property="Foreground" Value="#FFFFFF" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="MinHeight" Value="48" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="Padding" Value="40,14" />
+  </Style>
+  <Style Selector="Button.primary:pointerover">
+    <Setter Property="Background" Value="#72B842" />
+  </Style>
+  <Style Selector="Button.secondary">
+    <Setter Property="Background" Value="#1E1E1E" />
+    <Setter Property="Foreground" Value="#CCCCCC" />
+    <Setter Property="BorderBrush" Value="#333333" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="MinHeight" Value="40" />
+    <Setter Property="Padding" Value="24,10" />
+  </Style>
+  <Style Selector="Button.secondary:pointerover">
+    <Setter Property="Background" Value="#282828" />
+  </Style>
+  <Style Selector="Button.chrome">
+    <Setter Property="Width" Value="44" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="Button.chrome:pointerover">
+    <Setter Property="Background" Value="#242424" />
+  </Style>
+  <Style Selector="Button.chromeClose:pointerover">
+    <Setter Property="Background" Value="#E81123" />
+  </Style>
+  <Style Selector="ProgressBar">
+    <Setter Property="Foreground" Value="#62A035" />
+    <Setter Property="Background" Value="#242424" />
+    <Setter Property="CornerRadius" Value="2" />
+    <Setter Property="MinHeight" Value="4" />
+  </Style>
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="#161616" />
+    <Setter Property="BorderBrush" Value="#333333" />
+    <Setter Property="Foreground" Value="#F0F0F0" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="MinHeight" Value="38" />
+    <Setter Property="Padding" Value="12,7" />
+  </Style>
+  <Style Selector="CheckBox">
+    <Setter Property="Foreground" Value="#CCCCCC" />
+  </Style>
+</Styles>
